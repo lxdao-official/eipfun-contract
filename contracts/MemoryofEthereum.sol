@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract EIPFunNFT is ERC1155, ERC1155Supply, AccessControl {
+contract MemoryofEthereum is ERC1155, ERC1155Supply, AccessControl {
     bytes32 public constant OPERATION_ROLE = keccak256("OPERATION_ROLE");
     using Strings for uint256;
 
@@ -17,7 +17,7 @@ contract EIPFunNFT is ERC1155, ERC1155Supply, AccessControl {
     mapping(string => uint256) private _typeTokenIds;
     string[] private _types;
 
-    mapping(uint256 => bool) _tokenIdControls;
+    mapping(uint256 => bool) _tokenIdMintAllowed;
 
     struct MemberTypeAmounts {
         string[] types;
@@ -54,7 +54,7 @@ contract EIPFunNFT is ERC1155, ERC1155Supply, AccessControl {
         _typeTokenIds[nftType] = tokenId;
         _types.push(nftType);
 
-        _tokenIdControls[tokenId] = false;
+        _tokenIdMintAllowed[tokenId] = false;
 
         _tokenIdCounter += 1;
 
@@ -108,23 +108,23 @@ contract EIPFunNFT is ERC1155, ERC1155Supply, AccessControl {
 
         if (allow == true) {
             require(
-                _tokenIdControls[tokenId] == false,
+                _tokenIdMintAllowed[tokenId] == false,
                 "Minting of this NFT is allowed."
             );
         } else {
             require(
-                _tokenIdControls[tokenId] == true,
+                _tokenIdMintAllowed[tokenId] == true,
                 "Minting of this NFT is not allowed."
             );
         }
-        _tokenIdControls[tokenId] = true;
+        _tokenIdMintAllowed[tokenId] = allow;
     }
 
     function mint(string calldata nftType) external {
         uint256 tokenId = _typeTokenIds[nftType];
         require(tokenId != 0, "The type does not exist");
         require(
-            _tokenIdControls[tokenId] == true,
+            _tokenIdMintAllowed[tokenId] == true,
             "Minting of this NFT is not allowed."
         );
         require(

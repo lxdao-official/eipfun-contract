@@ -12,7 +12,7 @@ describe("DAOMember Test", function () {
   async function deployDAOMemberFixture() {
     const [owner, operator, user1, user2] = await ethers.getSigners();
 
-    const factory = await ethers.getContractFactory("EIPFunNFT");
+    const factory = await ethers.getContractFactory("MemoryofEthereum");
     const EIPFunNFT = await factory.deploy(baseURI);
 
     return {
@@ -127,6 +127,11 @@ describe("DAOMember Test", function () {
       NFT_B,
       [user1.address, user2.address],
       [1, 2]
+    );
+
+    await EIPFunNFT.connect(operator).controlMint(NFT_A, false);
+    await expect(EIPFunNFT.connect(user1).mint(NFT_A)).revertedWith(
+      "Minting of this NFT is not allowed."
     );
 
     // approval
