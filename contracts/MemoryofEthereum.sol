@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MemoryofEthereum is ERC1155, ERC1155Supply, AccessControl {
+contract MemoryofEthereum is ERC1155, ERC1155Supply, AccessControl, Ownable {
     bytes32 public constant OPERATION_ROLE = keccak256("OPERATION_ROLE");
     using Strings for uint256;
 
@@ -32,11 +33,14 @@ contract MemoryofEthereum is ERC1155, ERC1155Supply, AccessControl {
         string toBaseURI
     );
 
-    constructor(string memory _baseURI) ERC1155(_baseURI) {
+    constructor(
+        address initialOwner,
+        string memory _baseURI
+    ) ERC1155(_baseURI) Ownable(initialOwner) {
         baseURI = _baseURI;
 
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(OPERATION_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, initialOwner);
+        _grantRole(OPERATION_ROLE, initialOwner);
     }
 
     function updateBaseURI(

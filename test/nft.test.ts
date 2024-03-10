@@ -10,19 +10,28 @@ describe("DAOMember Test", function () {
   const NFT_C = "LondonNFT";
 
   async function deployDAOMemberFixture() {
-    const [owner, operator, user1, user2] = await ethers.getSigners();
+    const [deployer, owner, operator, user1, user2] = await ethers.getSigners();
 
     const factory = await ethers.getContractFactory("MemoryofEthereum");
-    const EIPFunNFT = await factory.deploy(baseURI);
+    const EIPFunNFT = await factory.deploy(owner.address, baseURI);
 
     return {
       EIPFunNFT,
+      deployer,
       owner,
       user1,
       user2,
       operator,
     };
   }
+
+  it("#0 - owner", async function () {
+    const { EIPFunNFT, owner, operator, user1 } = await loadFixture(
+      deployDAOMemberFixture
+    );
+    const gettedOwner = await EIPFunNFT.owner();
+    expect(gettedOwner).to.equal(owner.address);
+  });
 
   it("#1 - add type", async function () {
     const { EIPFunNFT, owner, operator, user1 } = await loadFixture(
