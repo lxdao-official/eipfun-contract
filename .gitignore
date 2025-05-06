@@ -12,3 +12,4 @@ artifacts
 .idea/
 abi/
 .vscode/
+.DS_Store
